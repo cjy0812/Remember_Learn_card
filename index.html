@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>本地卡片学习（增强）</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- mammoth (docx -> html/text) -->
+    <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
+</head>
+<body>
+    <div class="wrap">
+        <div class="header-row">
+            <h1 style="text-align:center; margin:0">本地卡片学习（增强版）</h1>
+            <div class="theme-controls">
+                <button id="themeToggle" class="btn-ghost">🌓 自动</button>
+            </div>
+        </div>
+
+        <!-- groups -->
+        <div class="panel">
+            <div class="row" style="align-items:center">
+                <label class="small">组：
+                    <select id="groupSelect" onchange="switchGroup()" style="margin-left:6px"></select>
+                </label>
+                <button class="btn-ghost" onclick="addGroup()">新建组</button>
+                <button class="btn-ghost" onclick="renameGroup()">重命名组</button>
+                <button class="btn-ghost" onclick="deleteGroup()">删除组</button>
+                <div style="margin-left:auto" class="small">每组保存在 localStorage，互不干扰</div>
+            </div>
+        </div>
+
+        <!-- import -->
+        <div class="panel">
+            <h3>导入题目（智能识别多格式）</h3>
+            <div class="small">支持 Q:/A:、数字题号、答：前缀、题目行后接答案、以及 .docx 文件导入（使用 mammoth）。导入前会预览并可编辑。</div>
+            <textarea id="importText" placeholder="在此粘贴题目，或使用下方选择 .docx 导入"></textarea>
+            <div class="row" style="margin-top:8px">
+                <button class="btn-primary" onclick="previewImport()">预览导入</button>
+                <button class="btn-ghost" onclick="importFromDocx()">选择 .docx 导入</button>
+                <button class="btn-ghost" onclick="importFromFile()">导入 JSON</button>
+                <button class="btn-ghost" onclick="clearGroup()">清空当前组</button>
+            </div>
+        </div>
+
+        <!-- settings -->
+        <div class="panel">
+            <h3>设置</h3>
+            <div class="row">
+                <label class="small">模式：
+                    <select id="modeSelect" style="margin-left:6px">
+                        <option value="learn">学习（全部题目过筛）</option>
+                        <option value="review">复习（不熟 + 不会）</option>
+                    </select>
+                </label>
+                <label class="small">题目倒计时（秒）：
+                    <input id="timeoutSec" type="number" min="5" value="15" style="width:80px;margin-left:6px"/>
+                </label>
+                <label class="small">最后提醒秒数：
+                    <input id="warnSec" type="number" min="1" value="5" style="width:80px;margin-left:6px"/>
+                </label>
+                <label class="small">答错后延时（秒）：
+                    <input id="wrongDelaySec" type="number" value="3" min="1" step="0.5" style="width:80px;margin-left:6px"/>
+                </label>
+            </div>
+
+            <!-- TTS 和音效控制 -->
+            <div style="margin-top:8px" class="row">
+                <label class="small">TTS 音量：
+                    <input id="ttsVolume" type="range" min="0" max="1" step="0.05" value="0.9" style="width:150px;margin-left:6px"/>
+                </label>
+                <label class="small" style="margin-left:auto">正确音 / 错误音：内置</label>
+            </div>
+
+            <!-- 独立控制开关 -->
+            <div style="margin-top:8px; padding:8px; background:var(--bg-secondary); border-radius:6px;">
+                <div class="row">
+                    <label class="small" style="display:flex; align-items:center; gap:4px;">
+                        <input type="checkbox" id="ttsEnabled" checked> 启用语音朗读
+                    </label>
+                    <label class="small" style="display:flex; align-items:center; gap:4px;">
+                        <input type="checkbox" id="ttsQuestion" checked> 朗读题目
+                    </label>
+                    <label class="small" style="display:flex; align-items:center; gap:4px;">
+                        <input type="checkbox" id="ttsAnswer" checked> 朗读答案
+                    </label>
+                    <label class="small" style="display:flex; align-items:center; gap:4px;">
+                        <input type="checkbox" id="soundEnabled" checked> 启用提示音
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- learning -->
+        <div class="panel">
+            <h3>学习</h3>
+            <div class="row" style="align-items:center">
+                <button class="btn-primary" onclick="startStudy()">开始学习</button>
+                <button class="btn-ghost" onclick="stopStudy()">结束本轮</button>
+                <div style="margin-left:auto" class="small">学习模式：学习=全部题目过筛；复习=不熟+不会</div>
+            </div>
+
+            <div id="status" class="status">总卡片:0 · 已掌握:0 · 队列剩余:0 · 当前:0/0 · 模式:无 · 组:无 · 倒计时:-</div>
+
+            <div style="margin-top:12px" class="card-box">
+                <div id="question">请点击"开始学习"</div>
+                <div id="answer"></div>
+            </div>
+
+            <div class="controls">
+                <button id="showBtn" class="btn-show" onclick="showAnswer()" disabled>显示答案</button>
+                <button id="btnKnown" class="btn-known" onclick="answerKnown()" disabled>会 ✓</button>
+                <button id="btnWrong" class="btn-wrong" onclick="answerWrong()" disabled>不会 ✗</button>
+            </div>
+        </div>
+
+        <!-- table -->
+        <div class="panel">
+            <h3>题库（编辑）</h3>
+            <div class="small">可在表格中编辑问题/答案；删除单题。支持多选批量操作。</div>
+            <div class="row batch-actions">
+                <button class="btn-ghost" onclick="selectAllCards()">全选</button>
+                <button class="btn-ghost" onclick="deselectAllCards()">全不选</button>
+                <button class="btn-ghost" onclick="deleteSelectedCards()">删除选中</button>
+                <button class="btn-ghost" onclick="resetStatsSelected()">重置选中统计</button>
+                <span id="selectedCount" class="small" style="margin-left:auto">已选择 0 个项目</span>
+            </div>
+            <table id="cardTable">
+                <tr>
+                    <th style="width:30px"><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this.checked)"></th>
+                    <th style="width:45px">排序</th>
+                    <th>问题</th>
+                    <th>答案</th>
+                    <th>会</th>
+                    <th>不熟</th>
+                    <th>不会</th>
+                    <th>掌握</th>
+                    <th>操作</th>
+                </tr>
+            </table>
+        </div>
+
+        <!-- report -->
+        <div class="panel">
+            <h3>报告</h3>
+            <div class="row">
+                <button class="btn-primary" onclick="openReport()">打开报告</button>
+                <button class="btn-ghost" onclick="downloadReportCSV()">下载 CSV 报表</button>
+                <button class="btn-ghost" onclick="exportGroup()">导出当前组 JSON</button>
+                <button class="btn-ghost" onclick="refreshReport()" id="refreshReportBtn" style="display:none">刷新报告</button>
+            </div>
+            <div id="reportBox" style="display:none;margin-top:10px">
+                <div id="reportSummary" class="small"></div>
+                <table id="reportTable"><tr><th>问题</th><th>会</th><th>不熟</th><th>不会</th><th>掌握</th></tr></table>
+            </div>
+        </div>
+    </div>
+
+    <!-- preview modal -->
+    <div id="previewModal" style="display:none" class="modal">
+        <div class="box">
+            <h3>导入预览（编辑后确认导入）</h3>
+            <div class="small">勾选需要导入的行，或修改题/答案后再点击"确认导入"。可以使用下方的按钮添加新题目或排序。</div>
+            <div class="row" style="margin-top:8px">
+                <button class="btn-ghost" onclick="addNewRowToPreview()">添加新题目</button>
+                <button class="btn-ghost" onclick="sortPreviewTable()">按问题排序</button>
+            </div>
+            <table id="previewTable" class="preview-table" style="width:100%;margin-top:8px">
+                <tr><th>导入?</th><th>问题</th><th>答案</th><th>操作</th></tr>
+            </table>
+            <div style="margin-top:8px" class="row">
+                <button class="btn-primary" onclick="confirmImport()">确认导入</button>
+                <button class="btn-ghost" onclick="closePreview()">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- hidden file inputs -->
+    <input id="fileDocx" type="file" accept=".docx" style="display:none" />
+    <input id="fileJson" type="file" accept="application/json" style="display:none" />
+
+    <script src="app.js"></script>
+</body>
+</html>

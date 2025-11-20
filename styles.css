@@ -1,0 +1,411 @@
+:root {
+    --bg: #f6f8fb;
+    --bg-secondary: #f8fafc;
+    --card: #fff;
+    --primary: #2563eb;
+    --good: #16a34a;
+    --bad: #ef4444;
+    --muted: #64748b;
+    --text: #0f172a;
+    --border: #e2e8f0;
+    --shadow: rgba(22, 28, 37, 0.06);
+}
+
+body {
+    font-family: system-ui, Segoe UI, Roboto, Arial, Helvetica, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 12px;
+    transition: background 0.3s, color 0.3s;
+}
+
+body.dark-theme {
+    --bg: #1e293b;
+    --bg-secondary: #334155;
+    --card: #475569;
+    --primary: #3b82f6;
+    --good: #22c55e;
+    --bad: #ef4444;
+    --muted: #94a3b8;
+    --text: #f1f5f9;
+    --border: #64748b;
+    --shadow: rgba(0, 0, 0, 0.3);
+}
+
+.wrap {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.theme-controls {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.theme-tooltip {
+    font-size: 12px;
+    color: var(--muted);
+    background: var(--bg-secondary);
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+}
+
+.panel {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 12px;
+    margin: 10px 0;
+    box-shadow: 0 6px 18px var(--shadow);
+    transition: background 0.3s, box-shadow 0.3s;
+}
+
+.row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.small {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+textarea {
+    width: 100%;
+    min-height: 110px;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    font-size: 15px;
+    resize: vertical;
+    background: var(--card);
+    color: var(--text);
+    transition: background 0.3s, color 0.3s, border-color 0.3s;
+}
+
+button {
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s, transform 0.1s;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: #fff;
+}
+
+.btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.btn-ghost:hover {
+    background: var(--bg-secondary);
+}
+
+select,
+input[type=number],
+input[type=range],
+input[type=text] {
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    transition: background 0.3s, color 0.3s, border-color 0.3s;
+}
+
+.card-box {
+    background: linear-gradient(180deg, var(--card), var(--bg-secondary));
+    padding: 18px;
+    border-radius: 10px;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 10px 30px var(--shadow);
+    transition: background 0.3s, box-shadow 0.3s;
+}
+
+#question {
+    font-size: 18px;
+    color: var(--text);
+    line-height: 1.4;
+}
+
+#answer {
+    margin-top: 10px;
+    color: var(--primary);
+    white-space: pre-wrap;
+}
+
+.controls {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.controls button {
+    flex: 1;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+}
+
+.btn-known {
+    background: var(--good);
+    color: #fff;
+}
+
+.btn-wrong {
+    background: var(--bad);
+    color: #fff;
+}
+
+.btn-show {
+    background: var(--primary);
+    color: #fff;
+}
+
+.status {
+    margin-top: 8px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    font-size: 13px;
+}
+
+th,
+td {
+    border: 1px solid var(--border);
+    padding: 6px;
+    text-align: left;
+    vertical-align: middle;
+    transition: border-color 0.3s;
+}
+
+input[type=text] {
+    width: 100%;
+}
+
+@media (max-width:640px) {
+    .controls {
+        flex-direction: column;
+    }
+    .header-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .theme-controls {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .batch-actions {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    #selectedCount {
+        margin-left: 0;
+        margin-top: 8px;
+    }
+}
+
+/* modal preview */
+.modal {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.modal .box {
+    width: 95%;
+    max-width: 900px;
+    background: var(--card);
+    padding: 12px;
+    border-radius: 8px;
+    max-height: 85vh;
+    overflow: auto;
+    transition: background 0.3s;
+}
+
+.preview-table input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.timer-warn {
+    color: var(--bad);
+    font-weight: 700;
+}
+
+/* 导入预览表格操作按钮样式 */
+.preview-action-btn {
+    padding: 4px 8px;
+    font-size: 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.preview-action-btn:hover {
+    background: var(--bg);
+}
+
+/* 排序按钮样式 */
+.sort-btn {
+    padding: 2px 4px;
+    font-size: 10px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    cursor: pointer;
+    margin: 0 1px;
+    transition: background 0.2s;
+    min-width: 20px;
+}
+
+.sort-btn:hover {
+    background: var(--bg);
+}
+
+.sort-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 拖动样式 */
+.dragging {
+    opacity: 0.5;
+    background: var(--primary);
+    color: white;
+}
+
+.drag-over {
+    border-top: 2px solid var(--primary);
+}
+
+/* 多选操作区域 */
+.batch-actions {
+    background: var(--bg-secondary);
+    padding: 8px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+}
+
+/* 选中计数 */
+#selectedCount {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+/* 卡片行选中状态 */
+.card-row.selected {
+    background: var(--primary);
+    color: white;
+}
+
+.card-row.selected input,
+.card-row.selected .sort-btn {
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--text);
+}
+
+/* 移动端表格优化 */
+@media (max-width: 768px) {
+    table {
+        font-size: 12px;
+    }
+    
+    th, td {
+        padding: 4px;
+    }
+    
+    #cardTable th:nth-child(2),
+    #cardTable td:nth-child(2) {
+        width: 45px;
+        min-width: 45px;
+    }
+    
+    .sort-btn {
+        padding: 1px 3px;
+        font-size: 9px;
+        margin: 0 1px;
+    }
+    
+    .batch-actions button {
+        padding: 6px 8px;
+        font-size: 12px;
+    }
+    
+    #cardTable th:nth-child(3),
+    #cardTable td:nth-child(3),
+    #cardTable th:nth-child(4),
+    #cardTable td:nth-child(4) {
+        min-width: 100px;
+    }
+}
+
+@media (max-width: 480px) {
+    table {
+        font-size: 11px;
+    }
+    
+    #cardTable th:nth-child(2),
+    #cardTable td:nth-child(2) {
+        width: 40px;
+        min-width: 40px;
+    }
+    
+    .sort-btn {
+        padding: 1px 2px;
+        font-size: 8px;
+    }
+    
+    #cardTable th:nth-child(3),
+    #cardTable td:nth-child(3),
+    #cardTable th:nth-child(4),
+    #cardTable td:nth-child(4) {
+        min-width: 80px;
+    }
+}
