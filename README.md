@@ -4,8 +4,6 @@
 
 一个功能强大的本地化卡片学习工具，支持智能导入、语音朗读、多组管理和详细学习统计。
 
-## 🌟 主要特性
-
 ### 🎯 智能导入系统
 
 - **多格式支持**：智能识别 Q:/A:、数字题号、答：前缀等多种格式
@@ -98,4 +96,9 @@
 - **性能优化**：流畅的动画和响应体验
 
 这个工具特别适合需要记忆性学习的内容，如外语单词、专业知识、考试复习等场景，通过科学的间隔重复算法和多媒体辅助，大幅提升学习效率。
+
+
+![桌面端效果](https://raw.githubusercontent.com/cjy0812/Remember_Learn_card/refs/heads/main/Screenshot%202025-11-20%20at%2023-04-49%20%E6%9C%AC%E5%9C%B0%E5%8D%A1%E7%89%87%E5%AD%A6%E4%B9%A0%EF%BC%88%E5%A2%9E%E5%BC%BA%EF%BC%89.png)
+
+![移动端效果](https://raw.githubusercontent.com/cjy0812/Remember_Learn_card/refs/heads/main/Screenshot_2025_1120_230721.jpg)
 
